@@ -1,54 +1,77 @@
+# ======================
 # Python
+# ======================
 __pycache__/
 *.py[cod]
-*$py.class
+*.pyo
+*.pyd
 *.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
 *.egg
-
-# Virtual Environment
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+.venv/
 venv/
 ENV/
 env/
 
-# PyCharm
-.idea/
+# ======================
+# Jupyter
+# ======================
+.ipynb_checkpoints/
 
-# VS Code
+# ======================
+# IDE / Editor
+# ======================
 .vscode/
+.idea/
+*.swp
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
+# ======================
 # OS
+# ======================
 .DS_Store
 Thumbs.db
 
-# FFmpeg (大文件不提交到仓库)
-ffmpeg/
+# ======================
+# Logs
+# ======================
+*.log
 
-# Output files
+# ======================
+# Video / Data (非常重要)
+# ======================
 *.mp4
-*.mov
 *.avi
+*.mov
 *.mkv
-*.wmv
 *.flv
-*.webm
-*.m4v
+*.wmv
+data/
+datasets/
+outputs/
+results/
+cache/
+
+# ======================
+# Model / Weights
+# ======================
+*.pt
+*.pth
+*.onnx
+*.ckpt
+*.engine
+
+# ======================
+# Environment
+# ======================
+.env
+.env.*
+
+# ======================
+# Temporary
+# ======================
+tmp/
+temp/
