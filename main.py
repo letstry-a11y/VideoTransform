@@ -8,10 +8,16 @@ import sys
 # 添加项目根目录到 sys.path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# 检查并添加内置 FFmpeg 路径到 PATH
-ffmpeg_path = os.path.join(os.path.dirname(__file__), "ffmpeg", "bin")
-if os.path.exists(ffmpeg_path):
-    os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ.get("PATH", "")
+# 检查并添加 FFmpeg 路径到 PATH
+# 优先使用项目内置路径，其次使用外部路径
+ffmpeg_paths = [
+    os.path.join(os.path.dirname(__file__), "ffmpeg", "bin"),  # 项目内置路径
+    r"D:\ffmpeg-master\bin",  # 外部 FFmpeg 路径（备用）
+]
+for ffmpeg_path in ffmpeg_paths:
+    if os.path.exists(ffmpeg_path):
+        os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ.get("PATH", "")
+        break
 
 # 设置 Windows DPI 感知模式 (高 DPI 支持)
 if sys.platform == 'win32':
