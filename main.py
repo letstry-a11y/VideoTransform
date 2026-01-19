@@ -8,8 +8,11 @@ import sys
 # 添加项目根目录到 sys.path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# 检查并添加内置 FFmpeg 路径到 PATH
+# 检查并添加 FFmpeg 路径到 PATH
+# 优先使用项目内置的 ffmpeg，否则使用外部路径
 ffmpeg_path = os.path.join(os.path.dirname(__file__), "ffmpeg", "bin")
+if not os.path.exists(ffmpeg_path):
+    ffmpeg_path = r"D:\ffmpeg-master\bin"
 if os.path.exists(ffmpeg_path):
     os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ.get("PATH", "")
 
@@ -29,6 +32,7 @@ os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt, QCoreApplication
 from ui.main_window import MainWindow
+
 
 
 def main():
