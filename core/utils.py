@@ -93,6 +93,8 @@ def check_ffmpeg_installed() -> bool:
             ['ffmpeg', '-version'],
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='ignore',
             timeout=5
         )
         return result.returncode == 0
@@ -151,6 +153,8 @@ def get_video_info(file_path: str) -> Optional[Dict[str, Any]]:
             cmd,
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='ignore',
             timeout=30
         )
 
