@@ -88,8 +88,8 @@ class TestCalculateTargetBitrate:
             192,  # 192kbps
             True
         )
-        # 预期视频码率约 3303 kbps
-        assert 3200 <= bitrate <= 3400
+        # 预期视频码率约 3128 kbps（含 5% 安全余量）
+        assert 3000 <= bitrate <= 3200
 
     def test_without_audio(self):
         """测试不保留音频时的计算"""
@@ -110,7 +110,7 @@ class TestCalculateTargetBitrate:
             192,
             True
         )
-        assert bitrate >= 200  # 最小码率 200kbps
+        assert bitrate >= 100  # 最小码率 100kbps
 
 
 class TestGetFfmpegParams:
