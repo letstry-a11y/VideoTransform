@@ -37,6 +37,7 @@ from PyQt5.QtCore import Qt, QCoreApplication
 from ui.main_window import MainWindow
 
 
+
 def main():
     """主函数"""
     # 设置 Qt 高 DPI 属性
