@@ -232,11 +232,16 @@ class VideoCompressor(QObject):
         # 视频编码器
         cmd.extend(['-c:v', params['video_codec']])
 
-        # CRF 或 码率
-        if 'crf' in params:
-            cmd.extend(['-crf', str(params['crf'])])
+        # CRF 或 码率（二选一，不能同时使用）
         if 'video_bitrate' in params:
+            # 按大小/按比例模式：使用码率控制
             cmd.extend(['-b:v', params['video_bitrate']])
+            # 添加最大码率限制，确保不超出目标
+            cmd.extend(['-maxrate', params['video_bitrate']])
+            cmd.extend(['-bufsize', params['video_bitrate']])
+        elif 'crf' in params:
+            # 按质量模式：使用 CRF
+            cmd.extend(['-crf', str(params['crf'])])
 
         # 预设
         if 'preset' in params:

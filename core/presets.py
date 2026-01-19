@@ -196,7 +196,7 @@ def calculate_target_bitrate(
     根据目标文件大小计算视频码率
 
     公式:
-        total_bits = target_size * 8
+        total_bits = target_size * 8 * safety_factor
         audio_bits = audio_bitrate * 1000 * duration
         video_bits = total_bits - audio_bits
         video_bitrate = video_bits / duration / 1000
@@ -213,8 +213,11 @@ def calculate_target_bitrate(
     if duration_seconds <= 0:
         return 2000  # 默认码率
 
-    # 总比特数
-    total_bits = target_size_bytes * 8
+    # 安全系数：预留 5% 余量用于容器开销和编码误差
+    safety_factor = 0.95
+
+    # 总比特数（考虑安全系数）
+    total_bits = target_size_bytes * 8 * safety_factor
 
     # 音频比特数
     audio_bits = 0
@@ -224,11 +227,15 @@ def calculate_target_bitrate(
     # 视频比特数
     video_bits = total_bits - audio_bits
 
+    # 如果视频比特数为负，说明目标大小太小，无法容纳音频
+    if video_bits <= 0:
+        video_bits = target_size_bytes * 8 * safety_factor * 0.8  # 分配 80% 给视频
+
     # 视频码率 (kbps)
     video_bitrate = video_bits / duration_seconds / 1000
 
     # 限制码率范围
-    video_bitrate = max(200, min(50000, video_bitrate))
+    video_bitrate = max(100, min(50000, video_bitrate))
 
     return int(video_bitrate)
 
@@ -273,13 +280,23 @@ def get_ffmpeg_params(
         params['preset'] = 'medium'
 
     elif settings.compression_mode == CompressionMode.RATIO and video_info:
-        # 按比例压缩 - 计算码率
-        original_bitrate = video_info.get('video_bit_rate', 0)
-        if original_bitrate > 0:
-            video_bitrate = int(original_bitrate * settings.target_ratio / 100 / 1000)
+        # 按比例压缩 - 根据原始文件大小计算目标大小，再计算码率
+        original_size = video_info.get('file_size', 0)
+        duration = video_info.get('duration', 0)
+
+        if original_size > 0 and duration > 0:
+            # 计算目标文件大小
+            target_size_bytes = int(original_size * settings.target_ratio / 100)
+            # 使用统一的码率计算函数
+            video_bitrate = calculate_target_bitrate(
+                target_size_bytes,
+                duration,
+                settings.audio_bitrate,
+                settings.keep_audio
+            )
             params['video_bitrate'] = f"{video_bitrate}k"
         else:
-            # 没有原始码率信息,使用 CRF
+            # 没有文件大小或时长信息，使用 CRF
             crf = get_crf_for_codec(settings.quality_level, settings.video_codec)
             params['crf'] = crf
         params['preset'] = 'medium'
